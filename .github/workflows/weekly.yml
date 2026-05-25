@@ -1,0 +1,45 @@
+name: Weekly Quantum Synthesis
+
+on:
+  schedule:
+    - cron: '0 4 * * 0'   # 04:00 UTC every Sunday = 07:00 Israel summer (IDT, UTC+3)
+  workflow_dispatch:        # Manual trigger from GitHub UI for testing
+
+jobs:
+  synthesise:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write       # Needed to commit weeklies.md back to the repo
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run weekly synthesis
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+          LANGFUSE_HOST: ${{ secrets.LANGFUSE_HOST || 'https://cloud.langfuse.com' }}
+          PYTHONIOENCODING: utf-8
+        run: python weekly_synthesis.py
+
+      - name: Commit updated weeklies.md
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add weeklies.md
+          git diff --staged --quiet || git commit -m "chore: add weekly synthesis [skip ci]"
+          git push
