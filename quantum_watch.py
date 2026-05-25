@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-quantum_watch.py — Step 3
+quantum_watch.py
 Fetches quantum computing news, deduplicates against the last 7 days,
 writes new items to items.csv, and sends a digest to Telegram.
+Traces all LLM calls to Langfuse when LANGFUSE_PUBLIC_KEY is set.
 """
 import csv
 import json
@@ -24,6 +25,40 @@ if hasattr(sys.stdout, "reconfigure"):
 if hasattr(sys.stderr, "reconfigure"):
     sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
+# ---------------------------------------------------------------------------
+# Langfuse tracing — optional, silently disabled when keys are not set
+# ---------------------------------------------------------------------------
+_LANGFUSE_ENABLED = False
+_langfuse_client = None
+
+try:
+    if os.environ.get("LANGFUSE_PUBLIC_KEY"):
+        from langfuse import Langfuse
+        from langfuse.decorators import langfuse_context, observe
+        _langfuse_client = Langfuse()
+        _LANGFUSE_ENABLED = True
+        print("  Langfuse tracing enabled.", file=sys.stderr)
+except ImportError:
+    print("[warn] langfuse package not installed — tracing disabled.", file=sys.stderr)
+
+if not _LANGFUSE_ENABLED:
+    # No-op shims so the rest of the code is identical whether tracing is on or off
+    def observe(_fn=None, **kwargs):  # type: ignore[misc]
+        def decorator(fn):
+            return fn
+        return decorator(_fn) if _fn is not None else decorator
+
+    class _NoopCtx:
+        def update_current_trace(self, **kw): pass
+        def update_current_observation(self, **kw): pass
+        def score_current_trace(self, **kw): pass
+
+    langfuse_context = _NoopCtx()  # type: ignore[assignment]
+
+
+# ---------------------------------------------------------------------------
+# Constants
+# ---------------------------------------------------------------------------
 MODEL = "claude-sonnet-4-5"
 ITEMS_CSV = Path(__file__).parent / "items.csv"
 CSV_COLUMNS = ["date_reported", "title", "summary", "url", "category"]
@@ -125,7 +160,76 @@ def _build_prompt(today: str, recent: list[dict]) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Claude + JSON helpers
+# Claude API calls — each is a traced generation span
+# ---------------------------------------------------------------------------
+
+@observe(as_type="generation")
+def _call_claude_main(client: anthropic.Anthropic, prompt: str) -> anthropic.types.Message:
+    """Primary Claude call: web search + news extraction."""
+    langfuse_context.update_current_observation(
+        name="news-fetch",
+        model=MODEL,
+        input=[{"role": "user", "content": prompt}],
+        model_parameters={"max_tokens": 4096, "tool_choice": "any"},
+    )
+
+    response = client.messages.create(
+        model=MODEL,
+        max_tokens=4096,
+        tools=[{"type": "web_search_20250305", "name": "web_search"}],
+        tool_choice={"type": "any"},
+        messages=[{"role": "user", "content": prompt}],
+    )
+
+    searches = [b for b in response.content if b.type == "server_tool_use"]
+    text_out = "".join(b.text for b in response.content if b.type == "text")
+
+    langfuse_context.update_current_observation(
+        output=text_out,
+        usage={
+            "input":  response.usage.input_tokens,
+            "output": response.usage.output_tokens,
+        },
+        metadata={"web_searches": len(searches)},
+    )
+    return response
+
+
+@observe(as_type="generation")
+def _call_claude_retry(client: anthropic.Anthropic, bad_json: str) -> str:
+    """Fallback call that asks Claude to fix malformed JSON."""
+    content = (
+        "The text below should be a JSON array but it is not valid JSON.\n"
+        "Return ONLY the corrected JSON array and absolutely nothing else:\n\n"
+        + bad_json
+    )
+    langfuse_context.update_current_observation(
+        name="json-fix-retry",
+        model=MODEL,
+        input=[{"role": "user", "content": content}],
+        model_parameters={"max_tokens": 4096},
+        metadata={"reason": "malformed_json"},
+    )
+
+    response = client.messages.create(
+        model=MODEL,
+        max_tokens=4096,
+        messages=[{"role": "user", "content": content}],
+    )
+
+    text_out = "".join(b.text for b in response.content if b.type == "text")
+    langfuse_context.update_current_observation(
+        output=text_out,
+        usage={
+            "input":  response.usage.input_tokens,
+            "output": response.usage.output_tokens,
+        },
+    )
+    return text_out
+
+
+# ---------------------------------------------------------------------------
+# JSON helpers
 # ---------------------------------------------------------------------------
 
 def _extract_array(text: str) -> str:
@@ -151,32 +255,21 @@ def _parse_json(raw: str, client: anthropic.Anthropic) -> list[dict]:
         print("[warn] Malformed JSON — retrying once with stricter instruction…",
               file=sys.stderr)
 
-    retry = client.messages.create(
-        model=MODEL,
-        max_tokens=4096,
-        messages=[
-            {
-                "role": "user",
-                "content": (
-                    "The text below should be a JSON array but it is not valid JSON.\n"
-                    "Return ONLY the corrected JSON array and absolutely nothing else:\n\n"
-                    + raw
-                ),
-            }
-        ],
-    )
-    for block in retry.content:
-        if block.type == "text":
-            try:
-                data2 = json.loads(_extract_array(block.text))
-                return data2 if isinstance(data2, list) else []
-            except json.JSONDecodeError:
-                pass
+    retry_text = _call_claude_retry(client, raw)
+    try:
+        data2 = json.loads(_extract_array(retry_text))
+        return data2 if isinstance(data2, list) else []
+    except json.JSONDecodeError:
+        pass
 
     print("[error] JSON still malformed after retry — returning empty list.",
           file=sys.stderr)
     return []
 
+
+# ---------------------------------------------------------------------------
+# News fetcher
+# ---------------------------------------------------------------------------
 
 def fetch_news(recent: list[dict]) -> list[dict]:
     api_key = os.environ.get("ANTHROPIC_API_KEY")
@@ -188,19 +281,13 @@ def fetch_news(recent: list[dict]) -> list[dict]:
     prompt = _build_prompt(today, recent)
 
     print("  Sending request to Claude…", file=sys.stderr)
-    response = client.messages.create(
-        model=MODEL,
-        max_tokens=4096,
-        tools=[{"type": "web_search_20250305", "name": "web_search"}],
-        tool_choice={"type": "any"},
-        messages=[{"role": "user", "content": prompt}],
-    )
+    response = _call_claude_main(client, prompt)
 
     searches = [b for b in response.content if b.type == "server_tool_use"]
     print(f"  Web searches performed: {len(searches)}", file=sys.stderr)
 
     raw = "".join(
-        block.text for block in response.content if block.type == "text"
+        b.text for b in response.content if b.type == "text"
     ).strip()
 
     if not raw:
@@ -219,7 +306,6 @@ def _html_escape(text: str) -> str:
 
 
 def _format_telegram(items: list[dict]) -> str:
-    """Build the HTML message to send to Telegram."""
     date_str = datetime.now().strftime("%Y-%m-%d")
     if not items:
         return f"⚛ <b>Quantum Digest — {date_str}</b>\n\nNo new quantum news today 🌙"
@@ -288,7 +374,7 @@ def send_telegram(text: str) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Output
+# Terminal output
 # ---------------------------------------------------------------------------
 
 def print_digest(items: list[dict]) -> None:
@@ -331,10 +417,20 @@ def print_digest(items: list[dict]) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Entry point
+# Entry point — wrapped in @observe() so the whole run is one Langfuse trace
 # ---------------------------------------------------------------------------
 
-if __name__ == "__main__":
+@observe()
+def run() -> None:
+    langfuse_context.update_current_trace(
+        name="quantum-digest",
+        tags=["scheduled"],
+        metadata={
+            "date":  datetime.now().strftime("%Y-%m-%d"),
+            "model": MODEL,
+        },
+    )
+
     print("Searching for quantum computing news…", file=sys.stderr)
 
     recent = load_recent_items()
@@ -342,19 +438,31 @@ if __name__ == "__main__":
 
     new_items = fetch_news(recent)
 
-    # URL-exact safety-net dedup (catches anything Claude missed semantically)
+    # URL-exact safety-net dedup
     before = len(new_items)
     new_items = url_dedup(new_items, recent)
     dropped = before - len(new_items)
     if dropped:
         print(f"  Dropped {dropped} duplicate URL(s).", file=sys.stderr)
 
-    # Write CSV first — this must succeed before Telegram is attempted
+    # Write CSV before Telegram so it's always saved even if Telegram fails
     if new_items:
         append_to_csv(new_items)
         print(f"  Wrote {len(new_items)} item(s) to {ITEMS_CSV}.", file=sys.stderr)
 
-    # Send to Telegram (failure here is logged but never crashes the script)
     send_telegram(_format_telegram(new_items))
-
     print_digest(new_items)
+
+    # Score so the trace is filterable in Langfuse by outcome
+    langfuse_context.score_current_trace(
+        name="items_found",
+        value=len(new_items),
+        comment=f"{len(new_items)} new item(s) reported",
+    )
+
+
+if __name__ == "__main__":
+    run()
+    if _LANGFUSE_ENABLED and _langfuse_client:
+        _langfuse_client.flush()  # Required in batch scripts — sends buffered events
+        print("  Langfuse trace flushed.", file=sys.stderr)
