@@ -27,33 +27,39 @@ if hasattr(sys.stderr, "reconfigure"):
 
 # ---------------------------------------------------------------------------
 # Langfuse tracing — optional, silently disabled when keys are not set
+# (Langfuse v4 API: from langfuse import observe, get_client)
 # ---------------------------------------------------------------------------
 _LANGFUSE_ENABLED = False
 _langfuse_client = None
 
 try:
     if os.environ.get("LANGFUSE_PUBLIC_KEY"):
-        from langfuse import Langfuse
-        from langfuse.decorators import langfuse_context, observe
-        _langfuse_client = Langfuse()
+        import warnings
+        # Suppress Pydantic v1 / Python 3.14 compatibility warning (cosmetic only)
+        warnings.filterwarnings("ignore", category=UserWarning, module="langfuse")
+        from langfuse import Langfuse, get_client, observe  # type: ignore[import]
+        _langfuse_client = Langfuse()   # initialises the global singleton
         _LANGFUSE_ENABLED = True
         print("  Langfuse tracing enabled.", file=sys.stderr)
-except ImportError:
-    print("[warn] langfuse package not installed — tracing disabled.", file=sys.stderr)
+except ImportError as e:
+    print(f"[warn] Langfuse import error ({e}) — tracing disabled.", file=sys.stderr)
+except Exception as e:
+    print(f"[warn] Langfuse init failed ({e}) — tracing disabled.", file=sys.stderr)
 
 if not _LANGFUSE_ENABLED:
-    # No-op shims so the rest of the code is identical whether tracing is on or off
+    # No-op shims — code is identical whether tracing is on or off
     def observe(_fn=None, **kwargs):  # type: ignore[misc]
         def decorator(fn):
             return fn
         return decorator(_fn) if _fn is not None else decorator
 
-    class _NoopCtx:
-        def update_current_trace(self, **kw): pass
-        def update_current_observation(self, **kw): pass
+    class _NoopClient:
+        def update_current_span(self, **kw): pass
+        def update_current_generation(self, **kw): pass
         def score_current_trace(self, **kw): pass
 
-    langfuse_context = _NoopCtx()  # type: ignore[assignment]
+    def get_client():  # type: ignore[misc]
+        return _NoopClient()
 
 
 # ---------------------------------------------------------------------------
@@ -166,7 +172,7 @@ def _build_prompt(today: str, recent: list[dict]) -> str:
 @observe(as_type="generation")
 def _call_claude_main(client: anthropic.Anthropic, prompt: str) -> anthropic.types.Message:
     """Primary Claude call: web search + news extraction."""
-    langfuse_context.update_current_observation(
+    get_client().update_current_generation(
         name="news-fetch",
         model=MODEL,
         input=[{"role": "user", "content": prompt}],
@@ -184,9 +190,9 @@ def _call_claude_main(client: anthropic.Anthropic, prompt: str) -> anthropic.typ
     searches = [b for b in response.content if b.type == "server_tool_use"]
     text_out = "".join(b.text for b in response.content if b.type == "text")
 
-    langfuse_context.update_current_observation(
+    get_client().update_current_generation(
         output=text_out,
-        usage={
+        usage_details={
             "input":  response.usage.input_tokens,
             "output": response.usage.output_tokens,
         },
@@ -203,7 +209,7 @@ def _call_claude_retry(client: anthropic.Anthropic, bad_json: str) -> str:
         "Return ONLY the corrected JSON array and absolutely nothing else:\n\n"
         + bad_json
     )
-    langfuse_context.update_current_observation(
+    get_client().update_current_generation(
         name="json-fix-retry",
         model=MODEL,
         input=[{"role": "user", "content": content}],
@@ -218,9 +224,9 @@ def _call_claude_retry(client: anthropic.Anthropic, bad_json: str) -> str:
     )
 
     text_out = "".join(b.text for b in response.content if b.type == "text")
-    langfuse_context.update_current_observation(
+    get_client().update_current_generation(
         output=text_out,
-        usage={
+        usage_details={
             "input":  response.usage.input_tokens,
             "output": response.usage.output_tokens,
         },
@@ -422,12 +428,12 @@ def print_digest(items: list[dict]) -> None:
 
 @observe()
 def run() -> None:
-    langfuse_context.update_current_trace(
+    get_client().update_current_span(
         name="quantum-digest",
-        tags=["scheduled"],
         metadata={
             "date":  datetime.now().strftime("%Y-%m-%d"),
             "model": MODEL,
+            "tags":  ["scheduled"],
         },
     )
 
@@ -454,7 +460,7 @@ def run() -> None:
     print_digest(new_items)
 
     # Score so the trace is filterable in Langfuse by outcome
-    langfuse_context.score_current_trace(
+    get_client().score_current_trace(
         name="items_found",
         value=len(new_items),
         comment=f"{len(new_items)} new item(s) reported",
