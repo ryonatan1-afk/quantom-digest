@@ -70,30 +70,55 @@ ITEMS_CSV = Path(__file__).parent / "items.csv"
 CSV_COLUMNS = ["date_reported", "title", "summary", "url", "category"]
 
 _SEARCH_TEMPLATE = """\
-Today is {today}. Search the web for quantum computing news published in the last 48 hours.
+Today is {today}. Search the web for quantum computing news published in the last 72 hours.
 
-Focus on:
-- New companies emerging from stealth mode
+Include ALL of the following types of news — cast a wide net:
+- New companies, product launches, partnerships, and deployments
 - Technical milestones (qubit counts, error rates, coherence, gate fidelity, etc.)
-- Scientific discoveries and breakthroughs
-- Funding rounds and investments
-- New research papers or pre-prints
+- Scientific discoveries, breakthroughs, and new research papers or pre-prints
+- Funding rounds, investments, and government programs
+- Applications of quantum technology (quantum sensing, quantum communications, \
+quantum cryptography, quantum networking, space/satellite, defence, finance, healthcare)
+- Industry events, acquisitions, leadership changes at quantum companies
 
-Include any relevant item dated within the last 48 hours even if it is not from today exactly.
+Include items dated within the last 72 hours even if not from today exactly.
+
+INCLUDE if the item involves any of:
+- Hardware performance claims with specific numbers (qubits, error rates, gate fidelity, coherence times)
+- Peer-reviewed papers or credible pre-prints
+- Funding rounds ≥$10M, or strategically significant regardless of size (SPAC mergers, IPOs, government equity stakes)
+- New algorithms, circuit architectures, or error correction approaches
+- Hardware deployments with named systems and technical specifications
+- Timeline or roadmap revisions backed by technical arguments
+
+EXCLUDE the following — do not include these even if they mention quantum computing:
+- White papers, policy documents, and deployment guides (not results — no experimental data)
+- Vague partnership or consortium announcements with no technical specifics or named deliverables
+- Grants under $5M for logistics, shipping, or supply-chain optimisation with no hardware component
+- Software described as "quantum-inspired", "quantum-assisted", or "quantum-resilient" that runs \
+on classical hardware (post-quantum cryptography software, classical optimisation with quantum branding)
+- Blockchain or cryptocurrency publications using quantum as a risk or fear angle \
+(unless reporting a genuine cryptographic breakthrough with technical evidence)
+- Regional academic programme launches, pilot phase announcements, or curriculum initiatives \
+with no new technical results
+
+When in doubt, ask: does this item tell an expert something they couldn't derive from first principles \
+already knowing the field? If no — exclude it.
 {dedup_section}\
 Return ONLY a raw JSON array — no markdown code fences, no preamble, no trailing text.
 Each element must have exactly these four keys:
   "title"    — short headline (15 words or fewer)
   "summary"  — one sentence explaining why this matters
-  "url"      — direct link to the source article
+  "url"      — direct link to the specific article (not a homepage or section page)
   "category" — one of exactly: company  milestone  research  funding  other
 
-If you find no relevant news, return exactly: []
+If you genuinely find zero relevant news after thorough searching, return exactly: []
 """
 
 _DEDUP_BLOCK = """\
-The following stories were already reported in the last 7 days.
-Skip any item that is substantially the same story, even if the wording differs:
+The following stories were already reported in the last 7 days — skip ONLY if the new item \
+reports the exact same specific event (same announcement, same paper, same funding round).
+A different development by the same company or on the same topic is NOT a duplicate:
 {lines}
 
 """
