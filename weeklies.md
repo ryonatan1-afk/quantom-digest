@@ -44,3 +44,27 @@ D-Wave dominates this week's narrative. Landing federal funding alongside blue-c
 **One Thing Being Overhyped**
 
 The "AI speeds up quantum threat" narrative is fear-mongering dressed as analysis. Yes, ML can optimize error correction—but we're still talking about incremental improvements to systems that remain years from cryptographic relevance. The same AI tools available to quantum developers are available to cryptographers hardening defenses. This feels like a convenient story to sell cybersecurity consulting services and drive clicks. The real bottleneck isn't optimization algorithms; it's fundamental physics challenges in qubit coherence and gate fidelity. No amount of machine learning magic fixes decoherence at 15 millikelvin.
+
+## Week of 2026-05-31
+
+# Quantum Computing Weekly Synthesis
+
+**Top 3 Themes**
+
+1. Post-quantum cryptography is graduating from research to revenue: Lastwall's $16M raise, Telia-QMill mobile encryption, Malta PRISM deployment, and accelerated Q-Day warnings signal a maturing market responding to real threat timelines.
+
+2. Finland and Poland are punching above their weight in European quantum deployments: IQM's second Radiance system in Poznan, QMill's €2.79M maritime grant, and Telia's encryption demo position smaller nations as implementation leaders, not just R&D participants.
+
+3. Quantum commercialization is choosing SPACs and mega-partnerships over traditional IPOs: Terra Quantum's $3.5B Axiom merger follows the playbook of earlier quantum firms seeking public capital through reverse mergers rather than conventional listings.
+
+**Who's Making Noise**
+
+D-Wave dominated the conversation twice—first defending its quantum advantage claims against Flatiron Institute's classical simulation challenge, then securing $5.4M in Year 2 Microelectronics Commons funding for manufacturing scale-up. Their need to publicly rebut classical competitors reveals ongoing credibility battles in quantum annealing. Meanwhile, Finnish startups QMill appeared in both the maritime optimization grant and the Telia encryption demo, suggesting a concentrated national strategy. Terra Quantum's surprise $3.5B SPAC announcement made them the week's biggest financial headline, though details on revenue and customer traction remain scarce.
+
+**Bold Prediction for Next Week**
+
+*Speculation:* Within seven days, a major cryptocurrency foundation or Bitcoin core developer will announce a formal working group on quantum-resistant address migration, directly responding to the Glassnode 6-million-BTC vulnerability analysis. The 2029 Q-Day timeline is too close for crypto's largest asset to ignore.
+
+**One Thing Being Overhyped**
+
+The Oracle-Classiq "AI-generated quantum code" announcement deserves skepticism. A 36-qubit financial simulation is well within the toy-problem range, and framing classical AI tools that generate quantum circuits as a breakthrough conflates two hype cycles without demonstrating genuine utility. Portfolio optimization has been quantum computing's "hello world" demo for a decade—wrapping it in "AI agents" doesn't make it suddenly viable for actual trading desks. Show me a fund manager who changed their allocation based on quantum output, not another press release about theoretical integration.
