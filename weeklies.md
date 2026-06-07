@@ -68,3 +68,27 @@ D-Wave dominated the conversation twice—first defending its quantum advantage 
 **One Thing Being Overhyped**
 
 The Oracle-Classiq "AI-generated quantum code" announcement deserves skepticism. A 36-qubit financial simulation is well within the toy-problem range, and framing classical AI tools that generate quantum circuits as a breakthrough conflates two hype cycles without demonstrating genuine utility. Portfolio optimization has been quantum computing's "hello world" demo for a decade—wrapping it in "AI agents" doesn't make it suddenly viable for actual trading desks. Show me a fund manager who changed their allocation based on quantum output, not another press release about theoretical integration.
+
+## Week of 2026-06-07
+
+# Weekly Quantum Computing Synthesis
+
+**Top 3 Themes**
+
+1. **Neutral-atom momentum consolidates in Japan**: Yaqumo landed Quantonation funding, an IISc partnership, and anchored a trilateral supply-chain deal with Hamamatsu and NKT Photonics—three separate announcements positioning neutral atoms as a serious hardware contender.
+
+2. **Capital floods established players while IPO window opens**: IBM pledged $10B, OQC raised a record €260M Series C, Quobly closed €115M Series A, IQM upsized its SPAC to $146M, and Quantinuum priced the largest quantum IPO ever at $16.8B valuation—unprecedented liquidity entering the sector simultaneously.
+
+3. **Manufacturing automation signals maturation**: C12's pick-and-place nanoassembly matched an entire year's output in four weeks, Quobly targets 300mm semiconductor wafers, and QuiX deployed feed-forward control with 150ns latency—hardware is shifting from lab craft to industrial process.
+
+**Who's Making Noise**
+
+Quantinuum dominated headlines, pricing its $16.8B IPO while simultaneously announcing a Mitsubishi Electric partnership for industrial CAD applications—validating both investor appetite and enterprise traction. Microsoft stole technical thunder with Majorana 2's 20-60 second coherence (1,000x improvement), directly challenging the ion-trap and neutral-atom incumbents. Japan emerged as an unexpected geographic protagonist: Yaqumo appeared in three separate items, while the JHPC-Quantum program attracted even non-Japanese participants like Qunova. IBM's $10B commitment dwarfed all other investments, framing 2029 fault tolerance as the industry's North Star.
+
+**Bold Prediction for Next Week**
+
+**Speculation:** Within seven days, at least one major cloud provider (AWS, Azure, or Google Cloud) will announce co-location or integration plans with Quantinuum's newly public hardware—capitalizing on IPO momentum to lock in commercial cloud partnerships before competitors move.
+
+**One Thing Being Overhyped**
+
+Microsoft's Majorana 2 coherence times are impressive on paper but conveniently omit gate fidelity and scalability roadmaps. Topological qubits have promised transformative stability for over a decade; 20-second idle coherence means nothing if you can't perform high-fidelity operations or scale beyond demonstration chips. Until Microsoft shows multi-qubit gates and a credible path to 100+ qubits, this remains a physics curiosity, not a commercial threat to ion traps or superconducting systems that already run meaningful algorithms today.
