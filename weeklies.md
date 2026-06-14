@@ -92,3 +92,25 @@ Quantinuum dominated headlines, pricing its $16.8B IPO while simultaneously anno
 **One Thing Being Overhyped**
 
 Microsoft's Majorana 2 coherence times are impressive on paper but conveniently omit gate fidelity and scalability roadmaps. Topological qubits have promised transformative stability for over a decade; 20-second idle coherence means nothing if you can't perform high-fidelity operations or scale beyond demonstration chips. Until Microsoft shows multi-qubit gates and a credible path to 100+ qubits, this remains a physics curiosity, not a commercial threat to ion traps or superconducting systems that already run meaningful algorithms today.
+
+## Week of 2026-06-14
+
+**Top 3 Themes**
+
+1. **Error correction is fragmenting** — IQM's barbell qLDPC codes, Quantum X Labs' AI transformers, and Microsoft's Majorana approach show three completely different architectural bets on the same problem.
+
+2. **2029 has become the industry's agreed finish line** — Both Microsoft and IBM independently committed to fault-tolerant systems by 2029, signaling coordinated timeline expectations (or coordinated marketing).
+
+3. **Superconducting remains the safe sovereign bet** — UAE chose Qilimanjaro's superconducting platform over exotic modalities, following the IBM/Google playbook for national quantum programs.
+
+**Who's Making Noise**
+
+Microsoft and IBM dominated with massive announcements — Microsoft's 1,000x reliability claim and 20-second qubit lifetimes represents the most credible Majorana progress in years, while IBM's $10 billion commitment dwarfs all prior quantum investments. Meanwhile, IQM quietly published what may be more important: a practical path to better codes without hardware redesign. The UAE's sovereign initiative with Qilimanjaro signals Middle Eastern states are moving from quantum tourism to actual deployment, joining the U.S.-China-EU hardware race.
+
+**Bold Prediction for Next Week**
+
+**[SPECULATION]** Google will announce a counter-investment or revised timeline within 10 days. IBM's $10B forces their hand — they cannot let IBM claim quantum leadership unopposed after the Willow chip momentum. Expect either a funding announcement or a technical milestone leak.
+
+**One Thing Being Overhyped**
+
+AI-based error correction is getting breathless coverage but remains unproven at scale. Quantum X Labs' transformer decoder collaboration sounds impressive until you realize we're still "evaluating" whether AI can match classical decoders that already work. Machine learning for syndrome decoding has been researched for five years with marginal gains over optimized classical algorithms. The OPX1000 integration is good engineering, but calling this a breakthrough conflates tooling improvements with fundamental advantages. Show me AI decoders running on 1,000-qubit systems with better latency and accuracy than lookup tables, then we'll talk. Until then, this is a solution hunting for a problem that conventional codes like IQM's barbell architecture are solving more directly.
