@@ -114,3 +114,25 @@ Microsoft and IBM dominated with massive announcements — Microsoft's 1,000x re
 **One Thing Being Overhyped**
 
 AI-based error correction is getting breathless coverage but remains unproven at scale. Quantum X Labs' transformer decoder collaboration sounds impressive until you realize we're still "evaluating" whether AI can match classical decoders that already work. Machine learning for syndrome decoding has been researched for five years with marginal gains over optimized classical algorithms. The OPX1000 integration is good engineering, but calling this a breakthrough conflates tooling improvements with fundamental advantages. Show me AI decoders running on 1,000-qubit systems with better latency and accuracy than lookup tables, then we'll talk. Until then, this is a solution hunting for a problem that conventional codes like IQM's barbell architecture are solving more directly.
+
+## Week of 2026-06-21
+
+**Top 3 Themes**
+
+1. **Error correction proves commercial viability**: Microsoft/Quantinuum's 800x reduction published in Nature, Atom Computing's toric code demo, and IBM's AI-discovered 465 new QEC codes signal the technology is maturing beyond academic curiosity.
+
+2. **Money floods sovereign silicon strategies**: Quobly (€115M), Silicon Quantum Computing ($40M AUD), and IQM's Italian deployment reflect national bets on homegrown manufacturing, not just qubit count.
+
+3. **Architectural diversity explodes**: Cat qubits (Alice & Bob), neutral atoms (Atom Computing, Yaqumo), trapped ions (Quantinuum), superconducting (IQM), and silicon (Quobly, SQC) all shipped major milestones in one week—no consensus winner yet.
+
+**Who's Making Noise**
+
+Quantinuum dominated with a trifecta: Nature-published error correction results validating tesseract codes, a $1.68B IPO (the largest pure-play quantum offering ever), and validation as Microsoft's hardware partner of choice. Meanwhile, the "second wave" emerged: Alice & Bob's cat-qubit Helium system and Atom Computing's neutral-atom error correction prove alternative modalities aren't just research projects anymore. IBM quietly leveraged AI to industrialize QEC discovery—OpenEvolve finding 465 codes suggests they're automating the theory bottleneck while rivals chase hardware heroics.
+
+**Bold Prediction for Next Week**
+
+*Speculation:* Quantinuum's IPO roadshow will reveal at least one Fortune 500 pharmaceutical or materials science partner as an anchor customer, announced within 10 days to justify the $15.6B valuation to skeptical public market investors unfamiliar with quantum timelines.
+
+**One Thing Being Overhyped**
+
+The Quantinuum IPO valuation. Yes, the Microsoft partnership and Nature publication are impressive, but $15.6B for a company that—like every quantum player—has *zero* path to quantum advantage revenue before 2028 is frothy. Compare to IonQ's rocky public debut: hype cycles don't survive quarterly earnings calls. The peer-reviewed 800x error reduction is real progress, but "800x better than terrible" still isn't commercially useful. Investors pricing in drug discovery breakthroughs are ignoring that even Quantinuum's own roadmaps put fault-tolerant applications 3-5 years out. When the growth-at-any-cost era ended for software, quantum won't get a pass.
