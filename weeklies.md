@@ -136,3 +136,27 @@ Quantinuum dominated with a trifecta: Nature-published error correction results 
 **One Thing Being Overhyped**
 
 The Quantinuum IPO valuation. Yes, the Microsoft partnership and Nature publication are impressive, but $15.6B for a company that—like every quantum player—has *zero* path to quantum advantage revenue before 2028 is frothy. Compare to IonQ's rocky public debut: hype cycles don't survive quarterly earnings calls. The peer-reviewed 800x error reduction is real progress, but "800x better than terrible" still isn't commercially useful. Investors pricing in drug discovery breakthroughs are ignoring that even Quantinuum's own roadmaps put fault-tolerant applications 3-5 years out. When the growth-at-any-cost era ended for software, quantum won't get a pass.
+
+## Week of 2026-06-28
+
+# Quantum Computing Weekly: June 22-28, 2026
+
+**Top 3 Themes**
+
+1. IonQ is everywhere—partnering with Duke on tripartite entanglement, integrating with Fixstars Amplify, and launching metro QKD with ID Quantique—suggesting aggressive commercial positioning across networking and optimization.
+
+2. Federal quantum spending accelerates: DOE's Genesis Initiative targets fault tolerance by 2028, DOD commits $200M to Farseer sensing, and Commerce promises $100M to Atom Computing under a White House executive order establishing benchmarking infrastructure.
+
+3. Quantum networking infrastructure matures rapidly through Boeing's Q4S space entanglement swapping demo, Atom Computing/Nu Quantum's utility-scale networking stack, and Duke/IonQ's modular photonic interconnects—distributed computing is no longer theoretical.
+
+**Who's Making Noise**
+
+IonQ dominated partnership announcements this week, appearing in four separate items spanning academic research, software integration, and quantum key distribution. The U.S. federal government made unprecedented coordinated moves with simultaneous White House, DOE, and DOD initiatives totaling hundreds of millions in quantum investment. Atom Computing emerged as a funding powerhouse, securing $300M including federal commitments while immediately parlaying that into a strategic networking partnership with Nu Quantum. IBM's Nighthawk validation and Quantinuum's 98-qubit Helios benchmarking showed incumbent hardware players delivering on near-term performance promises.
+
+**Bold Prediction for Next Week**
+
+**SPECULATION:** We'll see at least one major cloud provider (AWS, Azure, or Google Cloud) announce quantum networking capabilities or partnerships within 10 days, responding to the Atom/Nu Quantum and Boeing space entanglement announcements—the race to distributed quantum infrastructure just became too visible to ignore.
+
+**One Thing Being Overhyped**
+
+Space-based quantum computing gets breathless coverage but remains a solution searching for a problem. INNOSPACE's orbital quantum payload and Boeing's Q4S are impressive engineering, but ground-based quantum networks can serve 99% of near-term use cases more cheaply. Radiation hardening adds cost, launch adds risk, and latency penalties negate entanglement advantages for most applications. The physics is sound; the business case isn't. Until someone articulates why computation or communication *must* happen in orbit beyond "because it's cool," this is expensive spectacle distracting from terrestrial progress where actual users exist.
