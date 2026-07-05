@@ -160,3 +160,27 @@ IonQ dominated partnership announcements this week, appearing in four separate i
 **One Thing Being Overhyped**
 
 Space-based quantum computing gets breathless coverage but remains a solution searching for a problem. INNOSPACE's orbital quantum payload and Boeing's Q4S are impressive engineering, but ground-based quantum networks can serve 99% of near-term use cases more cheaply. Radiation hardening adds cost, launch adds risk, and latency penalties negate entanglement advantages for most applications. The physics is sound; the business case isn't. Until someone articulates why computation or communication *must* happen in orbit beyond "because it's cool," this is expensive spectacle distracting from terrestrial progress where actual users exist.
+
+## Week of 2026-07-05
+
+# Weekly Quantum Synthesis
+
+**Top 3 Themes**
+
+1. Error correction dominates the hardware roadmap: SpinQ's $147M targets surface codes, IBM ships Paulice for spacetime codes, and D-Wave/Yale pursue erasure qubits—three distinct approaches racing in parallel.
+
+2. Manufacturing finally gets real money: NIST/SRI's $20M quantum manufacturing center and SpinQ's production-scale 103-qubit systems signal the shift from lab demos to repeatable fabrication.
+
+3. Application validation on today's hardware: Berkeley Lab's 104-qubit hadronization simulation and IBM's 156-qubit Heron deployment show researchers extracting physics results from noisy intermediate-scale devices right now.
+
+**Who's Making Noise**
+
+IBM continues asserting open-ecosystem leadership—releasing Qiskit Paulice for community-wide error detection while Berkeley researchers validate real particle physics on their 156-qubit Heron processor. SpinQ emerges as China's superconducting heavyweight with $147M to scale fault-tolerant systems, directly challenging IBM and Google's roadmaps. Meanwhile, QuTech's diamond nanophotonics breakthrough and D-Wave's NSF-backed erasure qubit work remind us the modality wars aren't over—superconducting may lead in qubits, but photonics and annealing still hunt for architectural advantages. Türkiye's 300-expert national mobilization is the week's geopolitical subplot.
+
+**Bold Prediction for Next Week**
+
+*Speculation:* Within seven days, we'll see a Chinese state-affiliated fund or enterprise announce a photonics quantum investment exceeding $50M, explicitly framed as response to SpinQ's superconducting momentum—Beijing won't let one modality dominate domestic quantum strategy.
+
+**One Thing Being Overhyped**
+
+Türkiye's "National Quantum Strategy" deserves skepticism. Mobilizing 300 experts sounds impressive until you realize Israel's quantum ecosystem runs on ~150 deeply specialized researchers with two decades of institutional memory, not diffuse committee work across 123 organizations. Large-scale coordination often produces PowerPoints faster than qubits. Without naming a lead integrator, specific qubit target, or timeline for a functioning prototype, this looks like national prestige theater rather than executable engineering. Watch for whether SSB names a single accountable technical leader and commits to a testable milestone by year-end—if not, file this under "strategic aspiration" rather than competitive threat.
